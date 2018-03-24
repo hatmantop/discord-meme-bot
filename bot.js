@@ -1,6 +1,11 @@
 var Discord = require('discord.io');
 var logger = require('winston');
 var auth = require('./auth.json');
+var fs = require('fs');
+
+var memeLog = fs.createWriteStream('meme_log.txt', {
+    flags: 'a'
+});
 // Configure logger settings
 logger.remove(logger.transports.Console);
 logger.add(logger.transports.Console, {
@@ -22,92 +27,56 @@ bot.on('message', function (user, userID, channelID, message, evt) {
     // It will listen for messages that will start with `!`
     console.log(message);
     
-    //Stupid command stuff
-    if (message.substring(0, 1) == '!') {
-        var args = message.substring(1).split(' ');
-        var cmd = args[0];
-       
-        args = args.splice(1);
-        switch(cmd) {
-            // !ping
-            case 'ping':
+    
+    var parts = message.split(' ');
+    var memeCount = 0;
+    for(var i = 0; i < parts.length; i++){
+        var str = parts[i];
+        if(str.includes('.com') || str.includes('.net') || str.includes('.org')){
+            memeCount++;
+            if(str.includes('.jpg')){
+                if(str.indexOf('.jpg') == str.length - 4){
+                    logger.info("img: " + message);
+                    memeLog.write("img: " + message);
+                }
+            } else if (str.includes(".gifv")) {
+                if(str.indexOf('.gifv') == str.length - 5){
+                    logger.info("gifv: " + message);
+                    memeLog.write("gifv: " + message);
+                }
+            } 
+            else if (str.includes(".gif")) {
+                if(str.indexOf('.gif') == str.length - 4){
+                    logger.info("gif: " + message);
+                    memeLog.write("gif: " + message);
+                }
+            } else if (str.includes("imgur.com/gallery/")) {
+                logger.info("gal: " + message); 
+                memeLog.write("gal: " + message);
+            } else if (str.includes("i.imgur.com/")){
+                logger.info("img: " + message);
+                memeLog.write("img: " + message);
+            } else if(str.includes("imgur.com/")){
+                var fixedURL = str.substring(0, str.indexOf("imgur.com/")) + "i." + str.substring(str.indexOf("imgur.com/")) + ".jpg";
+                logger.info("img: " + fixedURL);
+                memeLog.write("img: " + fixedURL); 
+            } else {
+                memeCount--;
+            }
+            if(memeCount > 0){
+                var memeAlert = "Detected and saved " + memeCount + " meme" + (memeCount > 1 ? "s" : "");
                 bot.sendMessage({
                     to: channelID,
-                    message: 'Pong!'
+                    message: memeAlert
                 });
-            break;
-            // Just add any case commands if you want to..
-         }
-     }
-     
-     // Mega Pranks, ID is michaels 
-     if (message.substring(0, 20) == '<@95212457940754432>') {
-        console.log("mikey recieved");
-        var msg = message.substring(20).trim();
-        console.log(msg);
-
-        switch(msg) {
-            case 'pub?':
-                bot.sendMessage({
-                    to: channelID,
-                    message: 'yes'
-                });
-            break;
-            case 'pubg?':
-                bot.sendMessage({
-                    to: channelID,
-                    message: 'yes'
-                });
-            break;
-            // Just add any case commands if you want to..
-         }
-     }
-     
-     if (message.substring(0, 21) == '<@427023974996901899>') {
-        var msg = message.substring(21).trim();
-        logger.info('Command sent: ' + msg);
-        var args = msg.split(' ');
-        var cmd = args[0];
-        args = args.splice(1);
-        
-        switch(cmd) {
-            case 'test':
-                bot.sendMessage({
-                    to: channelID,
-                    message: 'What?'
-                });
-            break;
-            case 'break':
-                bot.sendMessage({
-                    to: channelID,
-                    message: '<@427023974996901899> break'
-                });
-            break;
-            case 'bother':
-                if(args.length != 2){
-                    bot.sendMessage({
-                        to: channelID,
-                        message: 'Usage of **bother** command: bother @<user> <times>'
-                    });
-                } else {
-                    var user = args[0];
-                    var times = parseInt(args[1]);
-                    setTimeout(botherFunction, 1000, user, times, channelID);
-                }       
-            break;
-            
+            }
         }
-     }
+        
+
+        
+    }
      
      
 });
 
-function botherFunction(user, times, channel) {
-    bot.sendMessage({
-        to: channel,
-        message: "" + user + " hey"
-    });
-    if (times > 0){
-        setTimeout(botherFunction, 1000, user, times - 1, channel);
-    }
-}
+
