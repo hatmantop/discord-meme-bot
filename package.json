@@ -4,5 +4,8 @@
     "description": "A meme collector",
     "main": "bot.js",
     "author": "Teagan Horkan",
-    "dependencies": {}
+    "dependencies": {
+        "discord.io": "github:woor/discord.io#gateway_v6",
+        "winston": "^2.4.1"
+    }
 }
