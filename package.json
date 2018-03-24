@@ -1,0 +1,8 @@
+{
+    "name": "meme-master",
+    "version": "1.0.0",
+    "description": "A meme collector",
+    "main": "bot.js",
+    "author": "Teagan Horkan",
+    "dependencies": {}
+}
