@@ -66,7 +66,7 @@ function handleMemes(channel, msg){
     var memeCount = 0;
     for(var i = 0; i < parts.length; i++){
         var str = parts[i];
-        if(str.includes('.com') || str.includes('.net') || str.includes('.org') || str.includes('.dog')){
+        if(str.includes('.com') || str.includes('.net') || str.includes('.org') || str.includes('.dog') || str.includes('.it')){
             memeCount++;
             if(str.includes('.jpg')){
                 if(str.indexOf('.jpg') == str.length - 4){
