@@ -74,6 +74,12 @@ function handleMemes(channel, msg){
                     memeLog.write("img: " + msg + os.EOL);
                     postMemeInfo('img', msg);
                 }
+            } else if(str.includes('.png')){
+                if(str.indexOf('.png') == str.length - 4){
+                    logger.info("img: " + msg);
+                    memeLog.write("img: " + msg + os.EOL);
+                    postMemeInfo('img', msg);
+                }
             } else if (str.includes(".gifv")) {
                 if(str.indexOf('.gifv') == str.length - 5){
                     logger.info("gifv: " + msg);
