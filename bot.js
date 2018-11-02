@@ -9,6 +9,7 @@ var emoji_arr = [':zero:', ':one:', ':two:', ':three:', ':four:', ':five:', ':si
 var memeLog = fs.createWriteStream('meme_log.txt', {
     flags: 'a'
 });
+var config = fs.readFileSync('static/config.json');
 // Configure logger settings
 logger.remove(logger.transports.Console);
 logger.add(logger.transports.Console, {
@@ -66,49 +67,34 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 });
 
 function handleMemes(channel, msg){
-    var parts = msg.split(' ');
-    var memeCount = 0;
+    let parts = msg.split(' ');
+    let memeCount = 0;
     for(var i = 0; i < parts.length; i++){
-        var str = parts[i];
-        if(str.includes('.com') || str.includes('.net') || str.includes('.org') || str.includes('.dog') || str.includes('.it')){
-            memeCount++;
-            if(str.endsWith('.jpg')){
-                logger.info("img: " + str);
-                memeLog.write("img: " + str + os.EOL);
-                postMemeInfo('img', str);
-            } else if(str.endsWith('.png')){
-                logger.info("img: " + str);
-                memeLog.write("img: " + str + os.EOL);
-                postMemeInfo('img', str);
-            } else if (str.endsWith(".gifv")) {
-                logger.info("gifv: " + str);
-                memeLog.write("gifv: " + str + os.EOL);
-            } 
-            else if (str.endsWith(".gif")) {
-                logger.info("gif: " + str);
-                memeLog.write("gif: " + str + os.EOL);
-                postMemeInfo('img', str);
-            } else if (str.includes("imgur.com/gallery/")) {
-                logger.info("gal: " + str); 
-                memeLog.write("gal: " + str + os.EOL);
-            } else if (str.includes("i.imgur.com/")){
-                logger.info("img: " + str);
-                memeLog.write("img: " + str + os.EOL);
-            } else if(str.includes("imgur.com/")){
-                var fixedURL = str.substring(0, str.indexOf("imgur.com/")) + "i." + str.substring(str.indexOf("imgur.com/")) + ".jpg";
-                logger.info("img: " + fixedURL);
-                memeLog.write("img: " + fixedURL + os.EOL);
-                postMemeInfo('img', fixedURL);
-                //memeLog.write('');
-            } else {
-                memeCount--;
-            }
-            
-        }   
+        let str = parts[i];
+        var memeCount = 0;
+        config.get("domains").array.forEach(element => {
+           if(str.includes('.'.concat(element))) {
+               config.get("extensions").array.forEach(e => {
+                    if(str.endsWith('.'.concat(e))) {
+                        logger.info(str);
+                        memeLog.write(str + os.EOL);
+                        postMemeInfo('img', str);
+                        memeCount++;
+                    } else if (str.includes("i.imgur.com/")){
+                        logger.info("img: " + str);
+                        memeLog.write("img: " + str + os.EOL);
+                    } else if(str.includes("imgur.com/")){
+                        var fixedURL = str.substring(0, str.indexOf("imgur.com/")) + "i." + str.substring(str.indexOf("imgur.com/")) + ".jpg";
+                        logger.info("img: " + fixedURL);
+                        memeLog.write("img: " + fixedURL + os.EOL);
+                        postMemeInfo('img', fixedURL);
+                    }
+               });
+           } 
+        });  
     }
     if(memeCount > 0){
-        var memeAlert = "" + emoji_arr[memeCount];
-        
+        var memeAlert = emoji_arr[memeCount];
         bot.sendMessage({
             to: channel,
             message: memeAlert
@@ -152,5 +138,4 @@ function postMemeInfo(type, url) {
     req.write(postData);
     req.end();
 }
-
 
