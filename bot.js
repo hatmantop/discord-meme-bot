@@ -31,13 +31,13 @@ bot.on('message', function (user, userID, channelID, message, evt) {
     
     var msgParts = message.split(' ');
     if(msgParts[0].trim() == '<@427211373924057088>'){
-        console.log("Command Recieved");
+        console.log("Command Received");
         if(msgParts.length == 1) {
             bot.sendMessage({
                 to: channelID,
                 message: "**USAGE:** @meme-master **<command>**"
             });
-        } else if(msgParts.length == 2){
+        } else {
             var cmd = msgParts[1].trim();
             switch(cmd){
                 case 'help':
@@ -46,6 +46,12 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                         message: "Hi " + user + "! I am currently storing your memes!"
                     });
                     break;
+                case 'thanks':
+                    bot.sendMessage({
+                        to: channelID,
+                        message: "no u"
+                    });
+                    break; 
                 default:
                     bot.sendMessage({
                         to: channelID,
@@ -66,18 +72,14 @@ function handleMemes(channel, msg){
         var str = parts[i];
         if(str.includes('.com') || str.includes('.net') || str.includes('.org') || str.includes('.dog') || str.includes('.it')){
             memeCount++;
-            if(str.includes('.jpg')){
-                if(str.indexOf('.jpg') == str.length - 4){
-                    logger.info("img: " + str);
-                    memeLog.write("img: " + str + os.EOL);
-                    postMemeInfo('img', str);
-                }
-            } else if(str.includes('.png')){
-                if(str.indexOf('.png') == str.length - 4){
-                    logger.info("img: " + str);
-                    memeLog.write("img: " + str + os.EOL);
-                    postMemeInfo('img', str);
-                }
+            if(str.endsWith('.jpg')){
+                logger.info("img: " + str);
+                memeLog.write("img: " + str + os.EOL);
+                postMemeInfo('img', str);
+            } else if(str.endsWith('.png')){
+                logger.info("img: " + str);
+                memeLog.write("img: " + str + os.EOL);
+                postMemeInfo('img', str);
             } else if (str.endsWith(".gifv")) {
                 logger.info("gifv: " + str);
                 memeLog.write("gifv: " + str + os.EOL);
