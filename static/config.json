@@ -1,4 +1,4 @@
 {
     "domains": ["com", "net", "org", "dog", "it"],
-    "extensions": ["jpg", "JPG", "png", "PNG", "gifv", "GIFV"]
+    "extensions": ["jpg", "JPG", "png", "PNG", "gifv", "GIFV", "gif", "GIF"]
 }

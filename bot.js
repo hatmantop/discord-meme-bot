@@ -9,7 +9,7 @@ var emoji_arr = [':zero:', ':one:', ':two:', ':three:', ':four:', ':five:', ':si
 var memeLog = fs.createWriteStream('meme_log.txt', {
     flags: 'a'
 });
-var config = fs.readFileSync('static/config.json');
+var config = JSON.parse(fs.readFileSync('static/config.json'));
 // Configure logger settings
 logger.remove(logger.transports.Console);
 logger.add(logger.transports.Console, {
@@ -62,7 +62,6 @@ bot.on('message', function (user, userID, channelID, message, evt) {
             }
         }      
     }
-
     handleMemes(channelID, message);
 });
 
@@ -71,10 +70,9 @@ function handleMemes(channel, msg){
     let memeCount = 0;
     for(var i = 0; i < parts.length; i++){
         let str = parts[i];
-        var memeCount = 0;
-        config.get("domains").array.forEach(element => {
+        config['domains'].forEach(element => {
            if(str.includes('.'.concat(element))) {
-               config.get("extensions").array.forEach(e => {
+               config['extensions'].forEach(e => {
                     if(str.endsWith('.'.concat(e))) {
                         logger.info(str);
                         memeLog.write(str + os.EOL);
